@@ -71,8 +71,25 @@ const updateTask = async(req, res) =>{
     }
 };
 
-
+const deleteTask = async(req, res) =>{
+    try{
+        const {id} = req.params;
+        const task = await prisma.task.update({
+            where: {id},
+            data:{deletedAt: new Date()}
+        });
+        res.status(200).json({
+            success: true,
+            data: task
+        });
+    } catch(error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
 
 module.exports = {
-    getTasks, createTask, updateTask
+    getTasks, createTask, updateTask, deleteTask
 }

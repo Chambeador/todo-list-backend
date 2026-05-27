@@ -3,11 +3,12 @@ const express = require("express");
 //organizdor de rutas
 const router = express.Router();
 
-const {getTasks, createTask, updateTask} = require("../controllers/taskController");
+const {getTasks, createTask, updateTask, deleteTask} = require("../controllers/taskController");
 
 router.get("/", getTasks);
 router.post("/", createTask);
 router.put("/:id", updateTask);
+router.delete("/:id", deleteTask)
 
 
 module.exports = router;
