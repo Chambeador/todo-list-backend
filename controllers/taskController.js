@@ -2,7 +2,11 @@ const prisma = require("../prisma/prisma");
 
 const getTasks = async(req, res) =>{
     try {
-        const tasks = await prisma.task.findMany();
+        const tasks = await prisma.task.findMany({
+             where: {
+                deletedAt: null
+             }
+        });
         res.status(200).json({
             success: true,
             data: tasks
@@ -48,7 +52,7 @@ const createTask = async(req, res) =>{
 const updateTask = async(req, res) =>{
     try{
         const {id} = req.params;
-        const {title, description, priority, todoListId} = req.body;
+        const {title, description, priority, completed} = req.body;
         const task = await prisma.task.update({
             where: {id},
             data: {
