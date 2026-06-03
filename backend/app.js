@@ -1,8 +1,9 @@
 const express = require("express");
-
+const cors = require("cors");
 const taskRoutes = require("./routes/taskRoutes")
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 //todo lo que empiece en task mandarlo a 
 app.use("/tasks", taskRoutes);
