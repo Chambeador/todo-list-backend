@@ -7,35 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model TodoList {
 
+model User {
   id          String    @id @default(uuid())
 
+  name        String?
+  email       String    @unique
+  password    String
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  todoLists   TodoList[]
+}
+
+model TodoList {
+  id          String    @id @default(uuid())
   title       String
   description String?
 
   createdAt   DateTime  @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
   deletedAt   DateTime?
+  updatedAt   DateTime  @default(now()) @updatedAt
 
-  tasks Task[]
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
 
+  tasks       Task[]
 }
 
 model Task {
-  id          String   @id @default(uuid())
-
+  id          String    @id @default(uuid())
   title       String
   description String?
-
-  completed   Boolean  @default(false)
-
-  priority    String   @default("medium")
-
-  deletedAt   DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  completed   Boolean   @default(false)
+  priority    String    @default("medium")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   todoListId  String
-  todoList    TodoList @relation(fields: [todoListId], references: [id], onDelete: Cascade)
+  deletedAt   DateTime?
+  todoList    TodoList  @relation(fields: [todoListId], references: [id], onDelete: Cascade)
 }
