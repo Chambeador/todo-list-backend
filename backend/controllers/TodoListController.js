@@ -5,6 +5,7 @@ const getTodoLists = async(req, res) =>{
         const userId = req.user.userId;
         const todoLists = await prisma.todoList.findMany({
             where: { deletedAt: null,userId: userId},
+              include: { tasks: true }
         });
 
         res.status(200).json({
