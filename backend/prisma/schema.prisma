@@ -34,8 +34,18 @@ model TodoList {
   user        User?     @relation(fields: [userId], references: [id])
 
   tasks       Task[]
+  files       File[]
 }
 
+model File{
+  id         String    @id @default(uuid())
+  name      String
+  url       String
+  createdAt  DateTime  @default(now())
+
+  todoListId String
+  todoList    TodoList @relation(fields: [todoListId], references: [id], onDelete: Cascade)
+}
 model Task {
   id          String    @id @default(uuid())
   title       String
