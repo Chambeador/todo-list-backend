@@ -21,6 +21,11 @@ function App(){
   const [newDescrip, setnewDescrip] = useState("");
 
 
+  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
+
+  
+
 
  useEffect(() => {
   if (!token) return;
@@ -61,7 +66,8 @@ function App(){
       setToken(newToken);
       setMessage("");
     } catch (error){
-      console.error(error);
+            console.error(error);
+
       setMessage("Credenciales incorrectas");
     }
   };
@@ -118,7 +124,8 @@ function App(){
 
     setEditingTaskId(null);
     } catch (error){
-      console.error(error);
+            console.error(error);
+
     }
   };
 
@@ -145,7 +152,8 @@ const handleCreateTask = async () => {
     setnewDescrip("");
     setnewPriori("");
     } catch (error) {
-      console.error(error);
+            console.error(error);
+
     }
 };
 
@@ -170,9 +178,50 @@ const handleDelete = async (taskId) => {
     setSelectedList(newSelectedList);
 
   } catch (error) {
-    console.error(error);
+          console.error(error);
+
   }
 };
+
+const handleUploadFile = async () => {
+  try {
+    if (!file) {
+      alert("No elegiste archivo");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("todoListId", selectedList.id);
+
+    await axios.post(
+      `${API_URL}/files`, formData, {
+        headers: { Authorization: "Bearer " + token }
+      }
+    );
+
+    alert("Archivo subido");
+    setFile(null);
+  } catch (error) {
+          console.error(error);
+
+    alert("Error subiendo archivo");
+  }
+};
+
+const loadFiles = async (todoListId) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/files/${todoListId}`,
+      { headers: { Authorization: "Bearer " + token } }
+    );
+    setFiles(response.data.data);
+  } catch (error) {
+          console.error(error);
+  }
+};
+
+
 
 
 
@@ -217,69 +266,98 @@ if(selectedList){
       </button>
       <h1>{selectedList.title}</h1>
       <p>{selectedList.description}</p>
-      <h2>Crear una Nueva Taraea</h2>
-      <p>Título</p>
-      <input value={newTitle}
-        onChange={(e) => setNewTitle(e.target.value)}
-      />
-      <p>Descripción</p>
-      <input value={newDescrip}
-        onChange={(e) => setnewDescrip(e.target.value)}
-      />
-      <p>Prioridad</p>
-      <input value={newPriori}
-        onChange={(e) => setnewPriori(e.target.value)}
-      />
-      <br />
-      <button onClick={handleCreateTask}>
-        Crear Task
-      </button>
-      <hr />
+
+      <div style={{ display: "flex", gap: "20px" }}>
+      <div style={{ flex: 1 }}>
+        <h2>Crear una Nueva Taraea</h2>
+        <p>Título</p>
+        <input value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+        />
+        <p>Descripción</p>
+        <input value={newDescrip}
+          onChange={(e) => setnewDescrip(e.target.value)}
+        />
+        <p>Prioridad</p>
+        <input value={newPriori}
+          onChange={(e) => setnewPriori(e.target.value)}
+        />
+        <br />
+        <button onClick={handleCreateTask}>
+          Crear Task
+        </button>
+        <hr />
 
 
-      <h2>Tareas</h2>
-      {selectedList.tasks.length === 0 ? (<p>No hay tareas.</p>) :(
-        selectedList.tasks.map((task) => (
-          <div key={task.id}>
-              {editingTaskId === task.id ? (
-                <div>
-                  <p>Título</p>
-                  <input value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                  />
-                  <p>Descripción</p>
-                  <input value={editDescription}
-                    onChange={(e) => setEditDescription(e.target.value)}
-                  />
-                  <p>Prioridad</p>
-                  <input value={editPriority}
-                    onChange={(e) => setEditPriority(e.target.value)}
-                  />
-                  <br />
-                  <button onClick={() => handleSave(task.id)}>
-                    Guardar
-                  </button>
-                </div>
-              ):(
-                <div>
-                  <h3>{task.title}</h3>
-                  <p>{task.description}</p>
-                  <p>Estado:{task.completed ? " Completada" : " Pendiente"}</p>
-                  <p>Prioridad:{task.priority}</p>
-                  <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-                    <button onClick={() => handleEdit(task)}>
-                      Editar
-                    </button>
-                    <button onClick={() => handleDelete(task.id)}>
-                      Eliminar
+        <h2>Tareas</h2>
+        {selectedList.tasks.length === 0 ? (<p>No hay tareas.</p>) :(
+          selectedList.tasks.map((task) => (
+            <div key={task.id}>
+                {editingTaskId === task.id ? (
+                  <div>
+                    <p>Título</p>
+                    <input value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                    />
+                    <p>Descripción</p>
+                    <input value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
+                    />
+                    <p>Prioridad</p>
+                    <input value={editPriority}
+                      onChange={(e) => setEditPriority(e.target.value)}
+                    />
+                    <br />
+                    <button onClick={() => handleSave(task.id)}>
+                      Guardar
                     </button>
                   </div>
-                </div>
-              )}
-              <hr />
-            </div>
-        ))
-      )}
+                ):(
+                  <div>
+                    <h3>{task.title}</h3>
+                    <p>{task.description}</p>
+                    <p>Estado:{task.completed ? " Completada" : " Pendiente"}</p>
+                    <p>Prioridad:{task.priority}</p>
+                    <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+                      <button onClick={() => handleEdit(task)}>
+                        Editar
+                      </button>
+                      <button onClick={() => handleDelete(task.id)}>
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                )}
+                <hr />
+              </div>
+          ))
+        )}
+      </div>
+        <div style={{ flex: 1 }}>
+          <h2>Archivos</h2>
+
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+
+         <p>{file ? file.name : "Elige algun archivod"}</p>
+
+          <button onClick={handleUploadFile}>
+            Subir archivo
+          </button>
+
+          <h3>Archivos subidos</h3>
+          {files.length === 0 ? <p>No hay archivos.</p> : (
+            files.map((f) => (
+              <div key={f.id}>
+                <a href={f.url} target="_blank">{f.name}</a>
+                <hr />
+              </div>
+            ))
+          )}
+        </div>
+    </div>
     </div>
   );
 }
@@ -295,7 +373,7 @@ return (
     {todoLists.map((list) => (
       <div
         key={list.id}
-        onClick={() => setSelectedList(list)}
+        onClick={() => { setSelectedList(list); loadFiles(list.id); }}
         className="todo-card"
       >
         <h2>{list.title}</h2>
