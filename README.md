@@ -217,6 +217,16 @@ Ejemplo desde terminal:
 psql -h <host> -U <usuario> -d <base_de_datos>
 ```
 
+Donde:
+
+- **host**: dirección del servidor donde se encuentra la base de datos PostgreSQL. Si se utiliza Supabase, este valor puede encontrarse dentro de la cadena de conexión proporcionada por el proyecto.
+- **usuario**: nombre del usuario con permisos para conectarse a la base de datos.
+- **base_de_datos**: nombre de la base de datos creada para el proyecto.
+
+
+Una vez conectado, se debe copiar y ejecutar todo el contenido del archivo `backup.txt`. Esto cargará los datos de prueba necesarios para utilizar y validar correctamente la aplicación.
+
+
 Después de cargar el respaldo, podrás probar el sistema con usuarios, listas y tareas ya creadas.
 
 ### Usuario de prueba
@@ -235,7 +245,7 @@ La configuración fue realizada tomando como referencia un tutorial de HTTPS loc
 
 ### 1. Instalar mkcert
 
-En Linux Mint:
+En Linux:
 
 ```bash
 sudo apt install mkcert
@@ -303,8 +313,6 @@ El backend se levanta con HTTPS en el puerto 3000.
 cd frontend
 npm run dev
 ```
-
-El frontend se levanta en Vite y consume el backend mediante la URL definida en `VITE_API_URL`.
 
 ## Endpoints principales
 
